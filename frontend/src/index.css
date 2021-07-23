@@ -1,0 +1,49 @@
+*{
+  padding: 0;
+  margin: 0;
+}
+
+#title{
+  text-align: center;
+  margin: 2%;
+}
+
+#container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.store{
+  border: 1px solid;
+  width: 25%;
+  height: 25%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #7998EE;
+  padding: 2% 0;
+  margin: 1%;
+}
+
+.store-img{
+  border: 1px solid;
+  width: 50%;
+  border-radius:5%;
+  margin-bottom: 4%;
+}
+
+.store-name{
+  color: black;
+  background-color: white;
+  border-radius: 3%;
+}
+
+button{
+  width: 100%;
+  height: 50px;
+}
