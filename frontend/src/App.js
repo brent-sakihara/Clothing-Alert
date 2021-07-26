@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 //import Table from './Table'
 //import Form from './Form'
-import Search from './Search'
+import Tracked from './Tracked'
 import Store from './Store'
 
 class App extends Component {
@@ -35,8 +35,8 @@ class App extends Component {
         const { showResults, stores, selectedStore } = this.state
         return (
             <div className="container">
-              {showResults ? <Store storeData= {stores} addSelectedStore={this.addSelectedStore}/> : null}
-              {!showResults ? <Search clearSelectedStore={this.clearSelectedStore}/> : null} 
+              {showResults ? <Store storeData= {stores} changeScreen={this.changeScreen}/> : null}
+              {!showResults ? <Tracked changeScreen={this.changeScreen}/> : null} 
               <div>{selectedStore.storeName}{selectedStore.storeURL}</div>
               <button onClick={this.changeScreen}>CLICK HERE TO CHANGE SCREEN</button>
             </div>

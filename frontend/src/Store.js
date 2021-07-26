@@ -42,9 +42,9 @@ class Store extends Component {
     if (this.state.URL !== "" && this.isValidHttpUrl(this.state.URL)) {
       //sends to database here
 
-      //this.props.clearSelectedStore()
       this.hideModal();
       this.setState(this.initialState);
+      this.props.changeScreen()
     } else {
       alert("Please enter a valid HTTP URL");
     }
@@ -58,11 +58,6 @@ class Store extends Component {
         <div className="store" key={index}>
           <img className="store-img" alt={store} src={imgURL} />
           <h2 className="store-name">{store}</h2>
-          <input
-            type="button"
-            value="Select"
-            onClick={() => this.props.addSelectedStore(store, imgURL)}
-          />
           <button class="btn btn-primary" onClick={this.showModal}>Select</button>
           <Modal show={this.state.isOpen} onHide={this.hideModal}>
             <Modal.Header>Enter a URL</Modal.Header>
