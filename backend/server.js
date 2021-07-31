@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 //const Pool = require("pg").Pool;
 const {Item, sequelize} = require('./models');
+const {callWebScrapers} = require('./automation/scrapers');
 
 /*
 const pool = new Pool({
@@ -16,7 +17,7 @@ const pool = new Pool({
 */
 
 const app = express();
-//app.use(cors);  //for some reason cors was messing up the api requests???
+app.use(cors());  //for some reason cors was messing up the api requests???
 app.use(express.json());
 
 /*
@@ -44,9 +45,9 @@ if (app.get("env") === "development") {
 
 //routes:
 
-//create an item to be tracked
+//create an item in database
 app.post('/items', async (req, res) => {
-  const {itemName, itemPrice, itemURL} = req.body;
+  const {itemName, itemPrice, itemURL,itemColor} = req.body;
   try {
     const item = await Item.create({itemName, itemPrice, itemURL})
     return res.json(item);
@@ -90,6 +91,29 @@ app.delete('/items/:uuid', async (req, res) => {
      });
     return res.status(200).send();
   } catch (err) {
+    console.error(error)
+    return res.status(500).json({ error: error.message })
+  }
+})
+
+//calls web scraper with url to send data back
+app.post('/urls', async (req, res) => {
+  
+  const {storeName, itemURL} = req.body;
+  try {
+    const url = await Item.findOne({ 
+      where: {itemURL},
+   });
+   if(url === null){
+      const data = await callWebScrapers(storeName, itemURL);
+      const item = await Item.create({itemName: data.title, itemPrice: data.cost, itemURL: data.link});
+      res.json(item);
+      //res.json(data);
+   }
+   else{
+     res.json({});
+   }
+  } catch (error) {
     console.error(error)
     return res.status(500).json({ error: error.message })
   }

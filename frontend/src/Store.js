@@ -6,12 +6,16 @@ class Store extends Component {
   initialState = {
     URL: "",
     isOpen: false,
+    storeName: "",
   };
 
   state = this.initialState;
 
-  showModal = () => {
-    this.setState({ isOpen: true });
+  showModal = (name) => {
+    this.setState({
+      isOpen: true,
+      storeName: name,
+    });
   };
 
   hideModal = () => {
@@ -38,18 +42,27 @@ class Store extends Component {
     return url.protocol === "http:" || url.protocol === "https:";
   };
 
-  handleTrack = () => {
+  handleTrack = async () => {
     if (this.state.URL !== "" && this.isValidHttpUrl(this.state.URL)) {
       //sends to database here
-
+      try {
+        const body = { storeName: this.state.storeName, itemURL: this.state.URL };
+        const response = await fetch("http://localhost:5000/urls", {
+          method: "POST", 
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+      } catch (err) {
+        console.error(err.message);
+      }
       this.hideModal();
       this.setState(this.initialState);
-      this.props.changeScreen()
+      this.props.changeScreen();
     } else {
       alert("Please enter a valid HTTP URL");
     }
   };
-  
+
   render() {
     const shops = this.props.storeData.map((shop, index) => {
       const store = shop.store;
@@ -58,20 +71,26 @@ class Store extends Component {
         <div className="store" key={index}>
           <img className="store-img" alt={store} src={imgURL} />
           <h2 className="store-name">{store}</h2>
-          <button class="btn btn-primary" onClick={this.showModal}>Select</button>
+          <button class="btn btn-primary" onClick={() => this.showModal(store)}>
+            Select
+          </button>
           <Modal show={this.state.isOpen} onHide={this.hideModal}>
-            <Modal.Header>Enter a URL</Modal.Header>
+            <Modal.Header>Enter a URL for {this.state.storeName}</Modal.Header>
             <Modal.Body>
               <label htmlFor="URL">URL</label>
               <input
                 type="text"
                 name="URL"
-                id="URL"
+                class = "URL"
                 value={this.state.URL}
                 onChange={this.handleChange}
               />
             </Modal.Body>
-            <Modal.Footer><button class="btn btn-dark" onClick={this.handleTrack}>Save</button></Modal.Footer>
+            <Modal.Footer>
+              <button class="btn btn-dark" onClick={this.handleTrack}>
+                Save
+              </button>
+            </Modal.Footer>
           </Modal>
         </div>
       );

@@ -17,12 +17,12 @@ class App extends Component {
           {store: 'Adidas', imgURL: 'https://cdn.shopify.com/s/files/1/0961/8798/collections/adidas-Performance-Logo-Black-Square-transparent-background-300x300_06a33b7b-3743-4d08-9827-7d49dea44ead_600x600_crop_center.png?v=1466457455'},
           {store: 'Zara', imgURL: 'https://www.webanywhere.com/wp-content/uploads/2017/05/Zara-eLearning-Case-Study.png'},
         ],
-        selectedStore: {},
     }
     changeScreen = () => { //using arrow functions allows to bypass binding the function
       const results = this.state.showResults;
       this.setState({showResults: !results})
     }
+    /*
     addSelectedStore = (storeName, storeURL) => {
         this.setState({selectedStore: {storeName, storeURL}})
         this.changeScreen()
@@ -31,13 +31,13 @@ class App extends Component {
         this.setState({selectedStore: {}})
         this.changeScreen()
     }
+    */
       render() {
-        const { showResults, stores, selectedStore } = this.state
+        const { showResults, stores } = this.state
         return (
             <div className="container">
               {showResults ? <Store storeData= {stores} changeScreen={this.changeScreen}/> : null}
-              {!showResults ? <Tracked changeScreen={this.changeScreen}/> : null} 
-              <div>{selectedStore.storeName}{selectedStore.storeURL}</div>
+              {!showResults ? <Tracked changeScreen={this.changeScreen}/> : null}
               <button onClick={this.changeScreen}>CLICK HERE TO CHANGE SCREEN</button>
             </div>
           )

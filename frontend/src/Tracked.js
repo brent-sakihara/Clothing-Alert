@@ -30,7 +30,7 @@ const Tracked = ({ changeScreen }) => {
   };
 
   useEffect(() => {
-    //calls getTodos each time this component is rendered
+    //calls getItems each time this component is rendered
     getItems();
   }, []); //the ,[] ensures it only calls it once, when you load the page
 
@@ -40,13 +40,14 @@ const Tracked = ({ changeScreen }) => {
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">#</th>
             <th scope="col">Item Name</th>
             <th scope="col">Item Price</th>
             <th scope="col">Item URL</th>
+            <th scope="col">Delete</th>
           </tr>
         </thead>
         <tbody>
+        {/*
           <tr>
             <th scope="row">1</th>
             <td>Grey shirt</td>
@@ -59,10 +60,12 @@ const Tracked = ({ changeScreen }) => {
             <td>$10.00</td>
             <td>https://pants.com</td>
           </tr>
+        */}
           {items.map((item) => (
             <tr key={item.uuid}>
               <td>{item.itemName}</td>
-              <td>{item.itemPrice}</td>
+              <td>{"$" + item.itemPrice}</td>
+              <td>{item.itemURL}</td>
               <td>
                 <button
                   className="btn btn-danger"
