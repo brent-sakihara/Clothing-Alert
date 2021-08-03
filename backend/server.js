@@ -2,6 +2,7 @@
 const express = require("express");
 //const http = require("http");
 const cors = require("cors");
+const cron = require('node-cron');
 //const Pool = require("pg").Pool;
 const {Item, sequelize} = require('./models');
 const {callWebScrapers} = require('./automation/scrapers');
@@ -108,7 +109,6 @@ app.post('/urls', async (req, res) => {
       const data = await callWebScrapers(storeName, itemURL);
       const item = await Item.create({itemName: data.title, itemPrice: data.cost, itemURL: data.link});
       res.json(item);
-      //res.json(data);
    }
    else{
      res.json({});
@@ -118,6 +118,18 @@ app.post('/urls', async (req, res) => {
     return res.status(500).json({ error: error.message })
   }
 })
+
+cron.schedule('0 7 * * *', () => {
+  console.log('The sale has begun!');
+  //run webscrapers, if sale (by comparing to database) then send message with twilio
+  const items = await Item.findAll({
+    attributes: []
+  });
+
+},{
+  scheduled: false,
+  timezone: "US / Pacific"
+});
 
 
 app.listen(5000, async ()=>{
