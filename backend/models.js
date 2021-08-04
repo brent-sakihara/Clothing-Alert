@@ -33,10 +33,14 @@ const Item = sequelize.define(
       allowNull: false,
     },
     itemPrice: {
-      type: DataTypes.STRING,
+      type: DataTypes.DOUBLE,
       allowNull: false,
     },
     itemURL: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    storeName: {
       type: DataTypes.STRING,
       allowNull: false,
     },

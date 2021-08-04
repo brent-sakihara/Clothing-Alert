@@ -69,7 +69,7 @@ async function scrapeNike(url) {
       price = await text2.jsonValue();
     }
 
-    const cost = Number(price.replace(/[^0-9.-]+/g, ""));
+    const cost = parseFloat(Number(price.replace(/[^0-9.-]+/g, "")));
 
     //await browser.waitForTarget(()=>false);
     await browser.close();
@@ -81,7 +81,7 @@ async function scrapeNike(url) {
   }
 }
 
-//callWebScrapers("Nike","https://www.nike.com/t/lebron-soldier-14-basketball-shoes-qkSRCH/CK6024-002");
+//callWebScrapers("Nike","https://www.nike.com/t/dri-fit-mens-swoosh-training-t-shirt-LwDhZh/CZ9724-672");
 
 async function scrapeAmazon(url) {
   const browser = await puppeteer.launch({
@@ -112,7 +112,7 @@ async function scrapeAmazon(url) {
     const text2 = await el3.getProperty("textContent");
     price = await text2.jsonValue();
   } catch {}
-  const cost = Number(price.replace(/[^0-9.-]+/g, ""));
+  const cost = parseFloat(Number(price.replace(/[^0-9.-]+/g, "")));
 
   await browser.close();
   return { title, cost, link };
@@ -156,7 +156,7 @@ async function scrapeHandM(url) {
       const text2 = await el3.getProperty("textContent");
       price = await text2.jsonValue();
     }
-    const cost = Number(price.replace(/[^0-9.-]+/g, ""));
+    const cost = parseFloat(Number(price.replace(/[^0-9.-]+/g, "")));
 
     await browser.close();
     return { title, color, cost, link };
@@ -218,7 +218,7 @@ async function scrapeAeropostale(url) {
       const text2 = await el3.getProperty("textContent");
       price = await text2.jsonValue();
     }
-    const cost = Number(price.replace(/[^0-9.-]+/g, ""));
+    const cost = parseFloat(Number(price.replace(/[^0-9.-]+/g, "")));
 
     //await browser.waitForTarget(()=>false);
     await browser.close();
@@ -274,7 +274,7 @@ async function scrapeNorthFace(url) {
     const [el3] = await page.$x('//*[@id="product-info"]/div[1]/span[1]');
     const text2 = await el3.getProperty("textContent");
     price = await text2.jsonValue();
-    const cost = Number(price.replace(/[^0-9.-]+/g, ""));
+    const cost = parseFloat(Number(price.replace(/[^0-9.-]+/g, "")));
 
     await browser.close();
     return { title, color, cost, link };
@@ -326,7 +326,7 @@ async function scrapeAdidas(url) {
     );
     const text2 = await el3.getProperty("textContent");
     price = await text2.jsonValue();
-    const cost = Number(price.replace(/[^0-9.-]+/g, ""));
+    const cost = parseFloat(Number(price.replace(/[^0-9.-]+/g, "")));
 
     //await browser.waitForTarget(()=>false);
     await browser.close();
@@ -401,7 +401,7 @@ async function scrapeZara(url) {
       const text3 = await el4.getProperty("textContent");
       price = await text3.jsonValue();
     }
-    const cost = Number(price.replace(/[^0-9.-]+/g, ""));
+    const cost = parseFloat(Number(price.replace(/[^0-9.-]+/g, "")));
 
     let color = hue.substring(5);
     //await browser.waitForTarget(()=>false);
