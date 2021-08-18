@@ -1,0 +1,24 @@
+{
+  "name": "sales-alert",
+  "version": "1.0.0",
+  "description": "Clothing sales app that notifies user when items they subscribed to go on sale",
+  "main": "index.js",
+  "dependencies": {
+    "firebase": "^8.8.1",
+    "twilio": "^3.66.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brent-sakihara/Clothing-Alert.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brent-sakihara/Clothing-Alert/issues"
+  },
+  "homepage": "https://github.com/brent-sakihara/Clothing-Alert#readme"
+}

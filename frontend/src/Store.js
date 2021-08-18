@@ -44,7 +44,6 @@ class Store extends Component {
 
   handleTrack = async () => {
     if (this.state.URL !== "" && this.isValidHttpUrl(this.state.URL)) {
-      //sends to database here
       try {
         const body = { storeName: this.state.storeName, itemURL: this.state.URL };
         const response = await fetch("http://localhost:5000/urls", {

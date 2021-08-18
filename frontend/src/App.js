@@ -3,10 +3,12 @@ import React, {Component} from 'react'
 //import Form from './Form'
 import Tracked from './Tracked'
 import Store from './Store'
+import Login from './Login.js';
+import Logout from './Logout.js';
+import firebase from './firebase'
 
 class App extends Component {
     state = { //doesnt require constructors anymore
-        //characters: [],
         showResults: true,
         stores: [
           {store: 'Amazon', imgURL: 'https://media-exp3.licdn.com/dms/image/C560BAQHTvZwCx4p2Qg/company-logo_200_200/0/1612205615891?e=2159024400&v=beta&t=J9qbDyzP2uv1lE1Xb_ieBaWwgeT-u52Mf-4ACuHP_p8'},
@@ -17,27 +19,31 @@ class App extends Component {
           {store: 'Adidas', imgURL: 'https://cdn.shopify.com/s/files/1/0961/8798/collections/adidas-Performance-Logo-Black-Square-transparent-background-300x300_06a33b7b-3743-4d08-9827-7d49dea44ead_600x600_crop_center.png?v=1466457455'},
           {store: 'Zara', imgURL: 'https://www.webanywhere.com/wp-content/uploads/2017/05/Zara-eLearning-Case-Study.png'},
         ],
+        user: {},
     }
     changeScreen = () => { //using arrow functions allows to bypass binding the function
       const results = this.state.showResults;
       this.setState({showResults: !results})
     }
-    /*
-    addSelectedStore = (storeName, storeURL) => {
-        this.setState({selectedStore: {storeName, storeURL}})
-        this.changeScreen()
+    componentDidMount = () => {
+      this.authListener();
     }
-    clearSelectedStore = () => {
-        this.setState({selectedStore: {}})
-        this.changeScreen()
+    authListener = () => {
+      firebase.auth().onAuthStateChanged((user) => {
+        if(user){
+          this.setState({user});
+        }
+        else{
+          this.setState({user: null});
+        }
+      })
     }
-    */
       render() {
         const { showResults, stores } = this.state
         return (
             <div className="container">
-              {showResults ? <Store storeData= {stores} changeScreen={this.changeScreen}/> : null}
-              {!showResults ? <Tracked changeScreen={this.changeScreen}/> : null}
+              {!this.state.user ? (<Login/>) : showResults ? (<Store storeData= {stores} changeScreen={this.changeScreen}/>) : (<Tracked changeScreen={this.changeScreen}/>)}
+              {this.state.user ? (<Logout/>) : null}
               <button onClick={this.changeScreen}>CLICK HERE TO CHANGE SCREEN</button>
             </div>
           )
