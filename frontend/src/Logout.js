@@ -3,6 +3,7 @@ import firebase from './firebase'
 
 class Logout extends Component {
     logout = () => {
+        this.props.showStores();
         firebase.auth().signOut();
     }
     render() {

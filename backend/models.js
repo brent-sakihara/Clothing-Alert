@@ -18,17 +18,34 @@ const sequelize = new Sequelize(
   }
 );
 
+const User = sequelize.define(
+  "users",
+  {
+    //model for users
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    userEmail: {
+      //attributes are the columns of the table
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+);
+
 const Item = sequelize.define(
   "items",
   {
     //model for clothing items
     // Model attributes are defined here
-    uuid: {
+    id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
     },
     itemName: {
-      //attributes are the columns of the table
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -47,44 +64,14 @@ const Item = sequelize.define(
   },
 );
 
-/*
-async function storeItem(url) {
-  const numberofInstances = await Item.count({
-    where: {
-      ItemURL: {
-        [Op.eq]: url,
-      },
-    },
-  });
-  console.log(
-    `There are ${numberofInstances} items with the url passed into this function`
-  );
-  if (numberofInstances == 30) {
-    const oldestInstance = await findOne({ where: { itemURL: url } });
-    await Item.destroy(oldestInstance);
+User.hasMany(Item, {
+  foreignKey: {
+    type: DataTypes.UUID,
+    allowNull: false
   }
-  const newItem = await Item.create({
-    itemName: "example",
-    itemPrice: "$100",
-    itemURL: url,
-  });
-  console.log("Item stored!");
-}
+});
+Item.belongsTo(User);
 
-async function createItem() {
-  const shirt = await Item.create({
-    itemName: "grey shirt",
-    itemPrice: "$5.99",
-    itemURL: "https:://shirts.com",
-  });
-  console.log("The shirt's auto-generated ID:", shirt.id);
-}
-
-async function deleteItem() {
-  await Item.destroy({ where: { itemName: "grey shirt" } });
-  console.log("Deleted all grey shirts from table");
-}
-*/
 
 /*
 //authentification test
@@ -93,5 +80,4 @@ sequelize.authenticate()
 .catch(err => console.log(err));
 */
 
-
-module.exports = {Item, sequelize}
+module.exports = {User, Item, sequelize}

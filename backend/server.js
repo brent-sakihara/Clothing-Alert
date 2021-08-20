@@ -5,7 +5,7 @@ const cors = require("cors");
 const cron = require("node-cron");
 const twilio = require("twilio");
 //const Pool = require("pg").Pool;
-const { Item, sequelize } = require("./models");
+const { User, Item, sequelize } = require("./models");
 const { callWebScrapers } = require("./automation/scrapers");
 
 if (process.env.NODE_ENV !== "production") {
@@ -23,7 +23,7 @@ const pool = new Pool({
 */
 
 const app = express();
-app.use(cors()); //for some reason cors was messing up the api requests???
+app.use(cors());
 app.use(express.json());
 
 const client = new twilio(
@@ -55,11 +55,50 @@ if (app.get("env") === "development") {
 
 //routes:
 
+//create an user in database
+app.post("/users", async (req, res) => {
+  const { userEmail } = req.body;
+  try {
+    const user = await User.create({ userEmail });
+    return res.json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+//get user by email
+app.get("/users/:email", async (req, res) => {
+  const email = req.params.email;
+  try {
+    const user = await User.findOne({
+      where: { userEmail: email },
+    });
+    return res.json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.findAll();
+    return res.json(users);
+  } catch (err) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+
+
 //create an item in database
 app.post("/items", async (req, res) => {
-  const { itemName, itemPrice, itemURL, itemColor } = req.body;
+  const { itemName, itemPrice, itemURL, userId, storeName } = req.body;
   try {
-    const item = await Item.create({ itemName, itemPrice, itemURL });
+    const item = await Item.create({ itemName, itemPrice, itemURL, userId, storeName });
     return res.json(item);
   } catch (error) {
     console.error(error);
@@ -67,6 +106,8 @@ app.post("/items", async (req, res) => {
   }
 });
 
+
+/*
 //gets all items that are tracked
 app.get("/items", async (req, res) => {
   try {
@@ -77,13 +118,29 @@ app.get("/items", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+*/
 
+//gets all items from a user
+app.get("/items/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const items = await Item.findAll({
+      where: { userId: id },
+    });
+    return res.json(items);
+  } catch (err) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+/*
 //gets item by uuid
-app.get("/items/:uuid", async (req, res) => {
-  const uuid = req.params.uuid;
+app.get("/items/:id", async (req, res) => {
+  const id = req.params.id;
   try {
     const item = await Item.findOne({
-      where: { uuid },
+      where: { id },
     });
     return res.json(item);
   } catch (err) {
@@ -91,13 +148,14 @@ app.get("/items/:uuid", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+*/
 
-//deletes item by uuid
-app.delete("/items/:uuid", async (req, res) => {
-  const uuid = req.params.uuid;
+//deletes item by id
+app.delete("/items/:id", async (req, res) => {
+  const id = req.params.id;
   try {
     const item = await Item.destroy({
-      where: { uuid },
+      where: { id: id },
     });
     return res.status(200).send();
   } catch (err) {
@@ -108,10 +166,10 @@ app.delete("/items/:uuid", async (req, res) => {
 
 //calls web scraper with url to send data back
 app.post("/urls", async (req, res) => {
-  const { storeName, itemURL } = req.body;
+  const { storeName, itemURL, userId } = req.body;
   try {
     const url = await Item.findOne({
-      where: { itemURL },
+      where: { itemURL: itemURL, userId: userId},
     });
     if (url === null) {
       const data = await callWebScrapers(storeName, itemURL);
@@ -121,6 +179,7 @@ app.post("/urls", async (req, res) => {
           itemPrice: data.cost,
           itemURL: data.link,
           storeName: storeName,
+          userId: userId,
         });
         res.json(item);
       } else {

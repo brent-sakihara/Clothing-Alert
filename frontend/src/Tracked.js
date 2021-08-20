@@ -1,15 +1,15 @@
 import React, { Fragment, useState, useEffect } from "react";
 
-const Tracked = ({ changeScreen }) => {
+const Tracked = ({ userEmail, changeScreen, queuedItem }) => {
   const [items, setItems] = useState([]);
 
-  const deleteItems = async (uuid) => {
+  const deleteItems = async (id) => {
     try {
-      const deleteItem = await fetch(`http://localhost:5000/items/${uuid}`, {
+      const deleteItem = await fetch(`http://localhost:5000/items/${id}`, {
         method: "DELETE",
       });
 
-      setItems(items.filter((item) => item.uuid !== uuid));
+      setItems(items.filter((item) => item.id !== id));
     } catch (err) {
       console.error(err.message);
     }
@@ -17,7 +17,9 @@ const Tracked = ({ changeScreen }) => {
 
   const getItems = async () => {
     try {
-      const response = await fetch("http://localhost:5000/items");
+      const u = await fetch(`http://localhost:5000/users/${userEmail}`);
+      const user = await(u.json());
+      const response = await fetch(`http://localhost:5000/items/${user.id}`);
       const jsonData = await response.json();
       setItems(jsonData);
     } catch (err) {
@@ -36,8 +38,8 @@ const Tracked = ({ changeScreen }) => {
 
   return (
     <Fragment>
-      <h1>Item Successfully Queried!</h1>
-      <table class="table table-hover">
+      {queuedItem ? <h1>Item Successfully Queried!</h1> : null}
+      <table className="table table-hover">
         <thead>
           <tr>
             <th scope="col">Item Name</th>
@@ -62,14 +64,14 @@ const Tracked = ({ changeScreen }) => {
           </tr>
         */}
           {items.map((item) => (
-            <tr key={item.uuid}>
+            <tr key={item.id}>
               <td>{item.itemName}</td>
               <td>{"$" + item.itemPrice}</td>
               <td>{item.itemURL}</td>
               <td>
                 <button
                   className="btn btn-danger"
-                  onClick={() => deleteItems(item.uuid)}
+                  onClick={() => deleteItems(item.id)}
                 >
                   Delete
                 </button>

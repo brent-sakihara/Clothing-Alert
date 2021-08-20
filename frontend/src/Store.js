@@ -45,18 +45,21 @@ class Store extends Component {
   handleTrack = async () => {
     if (this.state.URL !== "" && this.isValidHttpUrl(this.state.URL)) {
       try {
-        const body = { storeName: this.state.storeName, itemURL: this.state.URL };
+        const u = await fetch(`http://localhost:5000/users/${this.props.userEmail}`);
+        const user = await(u.json());
+        const body = { storeName: this.state.storeName, itemURL: this.state.URL, userId: user.id };
         const response = await fetch("http://localhost:5000/urls", {
           method: "POST", 
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
+        this.props.showItems(true);
       } catch (err) {
         console.error(err.message);
+        alert("Error: " + err.message);
       }
       this.hideModal();
       this.setState(this.initialState);
-      this.props.changeScreen();
     } else {
       alert("Please enter a valid HTTP URL");
     }
@@ -70,7 +73,7 @@ class Store extends Component {
         <div className="store" key={index}>
           <img className="store-img" alt={store} src={imgURL} />
           <h2 className="store-name">{store}</h2>
-          <button class="btn btn-primary" onClick={() => this.showModal(store)}>
+          <button className="btn btn-primary" onClick={() => this.showModal(store)}>
             Select
           </button>
           <Modal show={this.state.isOpen} onHide={this.hideModal}>
@@ -80,13 +83,13 @@ class Store extends Component {
               <input
                 type="text"
                 name="URL"
-                class = "URL"
+                className = "URL"
                 value={this.state.URL}
                 onChange={this.handleChange}
               />
             </Modal.Body>
             <Modal.Footer>
-              <button class="btn btn-dark" onClick={this.handleTrack}>
+              <button className="btn btn-dark" onClick={this.handleTrack}>
                 Save
               </button>
             </Modal.Footer>

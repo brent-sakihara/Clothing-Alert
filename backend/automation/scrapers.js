@@ -8,21 +8,27 @@ async function callWebScrapers(name, url) {
     return data;
   } else if (name === "Nike") {
     const data = await scrapeNike(url);
+    //console.log(data);
     return data;
   } else if (name === "H&M") {
     const data = await scrapeHandM(url);
+    //console.log(data);
     return data;
   } else if (name === "Aeropostale") {
     const data = await scrapeAeropostale(url);
+    //console.log(data);
     return data;
   } else if (name === "North Face") {
     const data = await scrapeNorthFace(url);
+    //console.log(data);
     return data;
   } else if (name === "Adidas") {
     const data = await scrapeAdidas(url);
+    //console.log(data);
     return data;
   } else if (name === "Zara") {
     const data = await scrapeZara(url);
+    //console.log(data);
     return data;
   } else {
     return {};
@@ -38,8 +44,9 @@ async function scrapeNike(url) {
     await page.setUserAgent(
       "Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13A404 Safari/601.1"
     );
+    await page.setDefaultNavigationTimeout(0); 
     await page.goto(url, { waitUntil: "networkidle2" });
-    await page.waitForTimeout(5000);
+    //await page.waitForTimeout(500);
 
     const link = url;
     let color, title, price;
@@ -48,24 +55,36 @@ async function scrapeNike(url) {
     const text = await el.getProperty("textContent");
     title = await text.jsonValue();
 
-    const [el2] = await page.$x(
+    /*
+    try{
+      const [el2] = await page.$x(
       '//*[@id="RightRail"]/div/span/div/div/ul/li[1]'
     );
     const hue = await el2.getProperty("textContent");
     const shade = await hue.jsonValue();
     color = shade.substring(7);
+  }
+  catch{
+    const [el2] = await page.$x(
+      '//*[@id="RightRail"]/div/div[7]/div/ul/li[1]'
+    );
+    const hue = await el2.getProperty("textContent");
+    const shade = await hue.jsonValue();
+    color = shade.substring(7);
+  }
+    */
 
     try {
-      const [el3] = await page.$x(
+      const [el2] = await page.$x(
         '//*[@id="RightRail"]/div/div[1]/div/div[1]/div[2]/div/div'
       );
-      const text2 = await el3.getProperty("textContent");
+      const text2 = await el2.getProperty("textContent");
       price = await text2.jsonValue();
     } catch {
-      const [el3] = await page.$x(
+      const [el2] = await page.$x(
         '//*[@id="RightRail"]/div/div[1]/div/div[1]/div[2]/div/div[1]'
       );
-      const text2 = await el3.getProperty("textContent");
+      const text2 = await el2.getProperty("textContent");
       price = await text2.jsonValue();
     }
 
@@ -73,7 +92,7 @@ async function scrapeNike(url) {
 
     //await browser.waitForTarget(()=>false);
     await browser.close();
-    return { title, color, cost, link };
+    return { title, cost, link };
   } catch (err) {
     console.error(err.message);
     await browser.close();
@@ -81,7 +100,7 @@ async function scrapeNike(url) {
   }
 }
 
-//callWebScrapers("Nike","https://www.nike.com/t/dri-fit-mens-swoosh-training-t-shirt-LwDhZh/CZ9724-672");
+//callWebScrapers("Nike","https://www.nike.com/u/custom-nike-air-force-1-high-by-you-10000790/3418295064");
 
 async function scrapeAmazon(url) {
   const browser = await puppeteer.launch({
@@ -108,8 +127,8 @@ async function scrapeAmazon(url) {
   const title = item.replace(/(\r\n|\n|\r)/gm, "");
 
   try {
-    const [el3] = await page.$x('//*[@id="price_inside_buybox"]');
-    const text2 = await el3.getProperty("textContent");
+    const [el2] = await page.$x('//*[@id="price_inside_buybox"]');
+    const text2 = await el2.getProperty("textContent");
     price = await text2.jsonValue();
   } catch {}
   const cost = parseFloat(Number(price.replace(/[^0-9.-]+/g, "")));
@@ -118,7 +137,7 @@ async function scrapeAmazon(url) {
   return { title, cost, link };
 }
 
-//callWebScrapers('Amazon','https://www.amazon.com/dp/B0937HD7G4/ref=cm_sw_r_cp_api_glt_fabc_QGCPQE1EG0Z0MVY3GCMK');
+//callWebScrapers('Amazon','https://smile.amazon.com/iPhone-Japan-Anime-Cartoon-Silicone/dp/B08NHPKPWT/?_encoding=UTF8&pd_rd_w=TkQV4&pf_rd_p=38316967-9a6c-4cf3-acd3-6269fd389669&pf_rd_r=GVHAA8CMBF3WK7WYN9TB&pd_rd_r=37fbdf99-bcfe-4ef8-bf75-391e7104218c&pd_rd_wg=sYOU3&ref_=pd_gw_ci_mcx_mr_hp_d&th=1');
 
 async function scrapeHandM(url) {
   const browser = await puppeteer.launch({
@@ -167,7 +186,7 @@ async function scrapeHandM(url) {
   }
 }
 
-//callWebScrapers("H&M","https://www2.hm.com/en_us/productpage.0944940016.html");
+//callWebScrapers("H&M","https://www2.hm.com/en_us/productpage.0964269004.html");
 
 async function scrapeAeropostale(url) {
   const browser = await puppeteer.launch({
@@ -182,7 +201,7 @@ async function scrapeAeropostale(url) {
       "Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13A404 Safari/601.1"
     );
     await page.goto(url, { waitUntil: "networkidle2" });
-    await page.waitForTimeout(10000);
+    await page.waitForTimeout(5000);
 
     try {
       const [close] = await page.$x(
@@ -230,7 +249,7 @@ async function scrapeAeropostale(url) {
   }
 }
 
-//callWebScrapers("Aeropostale","https://www.aeropostale.com/aeropostale-international-graphic-tee/60018796.html?dwvar_60018796_color=52&cgid=whats-new-guys-new-arrivals#uuid=7cfdb2c34306ff82edfec000ba");
+//callWebScrapers("Aeropostale","https://www.aeropostale.com/premium-air-athletic-skinny-jean/64138244.html?dwvar_64138244_color=962&cgid=whats-new-guys-new-arrivals#uuid=859a176e65d9c96d5ddd090ec7");
 
 async function scrapeNorthFace(url) {
   const browser = await puppeteer.launch({
@@ -245,7 +264,7 @@ async function scrapeNorthFace(url) {
       "Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13A404 Safari/601.1"
     );
     await page.goto(url, { waitUntil: "networkidle2" });
-    await page.waitForTimeout(10000);
+    //await page.waitForTimeout(10000);
 
     //const [close] = await page.$x('//*[@id="bx-element-1403043-2s3tWdt"]/button');
     //await close.evaluate(close=>close.click());
@@ -285,7 +304,7 @@ async function scrapeNorthFace(url) {
   }
 }
 
-//callWebScrapers("North Face","https://www.thenorthface.com/shop/mens-shirts-tops-hoodies-sweatshirts/mens-walls-pullover-hoodie-nf0a7r7u?variationId=RG1");
+//callWebScrapers("North Face","https://www.thenorthface.com/shop/kids-boys-jackets-vests-fleece/boys-forrest-full-zip-hooded-fleece-jacket-nf0a5aaz?variationId=7D6");
 
 async function scrapeAdidas(url) {
   const browser = await puppeteer.launch({
@@ -300,7 +319,7 @@ async function scrapeAdidas(url) {
       "Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13A404 Safari/601.1"
     );
     await page.goto(url, { waitUntil: "networkidle2" });
-    await page.waitForTimeout(10000);
+    //await page.waitForTimeout(10000);
 
     //const [close] = await page.$x('//*[@id="bx-element-1403043-2s3tWdt"]/button');
     //await close.evaluate(close=>close.click());
@@ -338,7 +357,7 @@ async function scrapeAdidas(url) {
   }
 }
 
-//callWebScrapers("Adidas","https://www.adidas.com/us/adilette-cork-slides/BA7211.html");
+//callWebScrapers("Adidas","https://www.adidas.com/us/face-covers-3-pack-m-l/H32391.html");
 
 async function scrapeZara(url) {
   const browser = await puppeteer.launch({
@@ -353,7 +372,7 @@ async function scrapeZara(url) {
       "Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13A404 Safari/601.1"
     );
     await page.goto(url, { waitUntil: "networkidle2" });
-    await page.waitForTimeout(10000);
+    //await page.waitForTimeout(10000);
 
     //const [close] = await page.$x('//*[@id="bx-element-1403043-2s3tWdt"]/button');
     //await close.evaluate(close=>close.click());
@@ -363,7 +382,7 @@ async function scrapeZara(url) {
     let hue, title, price;
     try {
       const [el] = await page.$x(
-        '//*[@id="main"]/article/div[2]/div[3]/div[1]/h1'
+        '//*[@id="main"]/article/div[2]/div[2]/div[1]/h1'
       );
       const text = await el.getProperty("textContent");
       title = await text.jsonValue();
@@ -374,6 +393,7 @@ async function scrapeZara(url) {
       const text = await el.getProperty("textContent");
       title = await text.jsonValue();
     }
+    /*
     try {
       const [el2] = await page.$x(
         '//*[@id="main"]/article/div[2]/div[3]/div[1]/p'
@@ -387,7 +407,8 @@ async function scrapeZara(url) {
       const clr = await el2.getProperty("textContent");
       hue = await clr.jsonValue();
     }
-
+    let color = hue.substring(5);
+    */
     try {
       const [el3] = await page.$x(
         '//*[@id="main"]/article/div[2]/div[3]/div[1]/div[2]/div/span/span/span/span'
@@ -403,10 +424,9 @@ async function scrapeZara(url) {
     }
     const cost = parseFloat(Number(price.replace(/[^0-9.-]+/g, "")));
 
-    let color = hue.substring(5);
     //await browser.waitForTarget(()=>false);
     await browser.close();
-    return { title, color, cost, link };
+    return { title, cost, link };
   } catch (err) {
     console.error(err.message);
     await browser.close();
@@ -414,7 +434,7 @@ async function scrapeZara(url) {
   }
 }
 
-//callWebScrapers("Zara","https://www.zara.com/us/en/combination-text-detail-shirt-p00962325.html?v1=106606326&v2=1862469");
-
+//callWebScrapers("Zara","https://www.zara.com/us/en/striped-polo-shirt-p03057620.html?v1=104755455&v2=1862469");
+//note: zara keeps changing website element xpaths so may have to delete
 
 module.exports = {callWebScrapers}

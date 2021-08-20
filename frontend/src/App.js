@@ -10,6 +10,7 @@ import firebase from './firebase'
 class App extends Component {
     state = { //doesnt require constructors anymore
         showResults: true,
+        queuedItem: false,
         stores: [
           {store: 'Amazon', imgURL: 'https://media-exp3.licdn.com/dms/image/C560BAQHTvZwCx4p2Qg/company-logo_200_200/0/1612205615891?e=2159024400&v=beta&t=J9qbDyzP2uv1lE1Xb_ieBaWwgeT-u52Mf-4ACuHP_p8'},
           {store: 'Nike', imgURL: 'https://static.nike.com/a/images/f_jpg,q_auto:eco/61b4738b-e1e1-4786-8f6c-26aa0008e80b/swoosh-logo-black.png'},
@@ -20,6 +21,13 @@ class App extends Component {
           {store: 'Zara', imgURL: 'https://www.webanywhere.com/wp-content/uploads/2017/05/Zara-eLearning-Case-Study.png'},
         ],
         user: {},
+    }
+    showItems = (isTrue) => {
+      this.setState({queuedItem: isTrue});
+      this.changeScreen();
+    }
+    showStores = () => {
+      this.setState({showResults: true});
     }
     changeScreen = () => { //using arrow functions allows to bypass binding the function
       const results = this.state.showResults;
@@ -39,12 +47,13 @@ class App extends Component {
       })
     }
       render() {
-        const { showResults, stores } = this.state
+        const { showResults, stores, user } = this.state
         return (
             <div className="container">
-              {!this.state.user ? (<Login/>) : showResults ? (<Store storeData= {stores} changeScreen={this.changeScreen}/>) : (<Tracked changeScreen={this.changeScreen}/>)}
-              {this.state.user ? (<Logout/>) : null}
-              <button onClick={this.changeScreen}>CLICK HERE TO CHANGE SCREEN</button>
+              {!user ? (<Login/>) : showResults ? (<Store userEmail = {user.email} storeData= {stores} showItems={this.showItems}/>) : (<Tracked userEmail = {user.email} changeScreen={this.changeScreen} queuedItem={this.state.queuedItem}/>)}
+              {user ? (<Logout showStores = {this.showStores}/>) : null}
+              {!user ? null : showResults ? (<button onClick={() => this.showItems(false)}>See Items Queued</button>) : null}
+              {user ? (<h4>Signed in as: {user.email}</h4>) : null}
             </div>
           )
       }

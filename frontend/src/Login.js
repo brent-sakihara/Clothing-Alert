@@ -27,7 +27,19 @@ class Login extends Component {
 
     signup(e){
         e.preventDefault();
-        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((u)=>{
+        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(async(u)=>{
+            try {
+                const body = { userEmail: u.user.email };
+                const response = await fetch("http://localhost:5000/users", {
+                  method: "POST", 
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(body),
+                });
+                const user = response.json();
+                console.log(user);
+              } catch (err) {
+                console.error(err.message);
+              }
             console.log(`user email: ${u.user.email}`);
             console.log(u.user);
         })
